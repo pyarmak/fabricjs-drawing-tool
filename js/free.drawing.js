@@ -1,12 +1,13 @@
 
 canvas.selection = false;
 var rect, ellipse, line, triangle, isDown, origX, origY, freeDrawing = true, textVal, activeObj;
-var isRectActive = false, isCircleActive = false, isArrowActive = false;
+var isRectActive = false, isCircleActive = false, isArrowActive = false, isPanning = false;
 
 var rectangle = document.getElementById('rect');
 var circle = document.getElementById('circle');
 var arrowSel = document.getElementById('arrow');
 var freedrawing = document.getElementById('freedrawing');
+var panning = document.getElementById('pan');
 rectangle.addEventListener('click', function () {
     isRectActive = !isRectActive;
 });
@@ -111,7 +112,26 @@ var _FabricCalcArrowAngle = function(x1, y1, x2, y2) {
 };
 
 canvas.on('mouse:move', function(o) {
-    if (isDown && freeDrawing) {
+    if (isPanning) {
+        var delta = new fabric.Point(o.e.movementX, o.e.movementY);
+        canvas.relativePan(delta);
+
+        var canvasViewPort = canvas.viewportTransform;
+
+        var imageHeight = canvas.height * canvasViewPort[0];
+        var imageWidth = canvas.width * canvasViewPort[0];
+
+        var bottomEndPoint = canvas.height * (canvasViewPort[0] - 1);
+        if(canvasViewPort[5] >= 0 || -bottomEndPoint > canvasViewPort[5]) {
+            canvasViewPort[5] = (canvasViewPort[5] >= 0) ? 0 : -bottomEndPoint;
+        }
+
+        var rightEndPoint = canvas.width * (canvasViewPort[0] - 1);
+        if(canvasViewPort[4] >= 0 || -rightEndPoint > canvasViewPort[4]) {
+            canvasViewPort[4] = (canvasViewPort[4] >= 0) ? 0 : -rightEndPoint;
+        }
+    }
+    else if (isDown && freeDrawing) {
         var pointer = canvas.getPointer(o.e);
 
         if(isRectActive) {

@@ -9,8 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "canvas": "^2.6.1",
     "express": "^4.16.3",
-    "fabric": "^2.2.4",
+    "fabric": "^3.6.0",
     "socket.io": "^2.1.1"
   }
 }
